@@ -2,6 +2,7 @@
 import 'isomorphic-fetch';
 
 import getNextLink from './next_link';
+import proxyURL from './proxy_url';
 import signedURLs from './signed_urls.json';
 
 const getData = (json) => {
@@ -34,7 +35,7 @@ const ok = (response) => {
 };
 
 const fetchPastEvents = (fullURL, eventsByIDOfGroup, groupEvents) => {
-  const url = fullURL.replace('https://api.meetup.com', '');
+  const url = proxyURL(fullURL);
 
   return fetch(url)
     .then(response => (ok(response) ? response : Promise.reject('...')))
