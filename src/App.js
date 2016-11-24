@@ -49,10 +49,10 @@ export default class App extends React.Component {
       latestPastEvents(this.state.meetupDataFromJSON)
     ).then((results) => {
       const sortEventsByTimeAscending = results.map(
-        ({ pastEvents }) => pastEvents.reverse()
+        result => result.pastEvents.reverse()
       );
 
-      const newSeries = []
+      const newSeries = [];
       const currentSeries = this.state.options.series;
 
       let ix = 0;
@@ -103,13 +103,13 @@ export default class App extends React.Component {
 
     Util.assertNotBlank('groupSpecifier', groupSpecifier);
 
-    const API_KEY_STORE_KEY = 'API_KEY';
+    const API_KEY_LOCAL_STORE_KEY = 'API_KEY';
     if (Util.isBlank(apiKey)) {
-      apiKey = localStorage.getItem(API_KEY_STORE_KEY);
+      apiKey = localStorage.getItem(API_KEY_LOCAL_STORE_KEY);
       Util.assertNotBlank('apiKey', apiKey);
     }
 
-    localStorage.setItem(API_KEY_STORE_KEY, apiKey);
+    localStorage.setItem(API_KEY_LOCAL_STORE_KEY, apiKey);
 
     Promise.all(pastEvents(groupSpecifier, apiKey)).then((results) => {
       this.setState({

@@ -54,7 +54,7 @@ const fetchPastEvents = (fullURL, groupEvents, apiKey) => {
       return response.json().then((json) => {
         const data = getData(json);
 
-        groupEvents = groupEvents.concat(data.payload);
+        groupEvents.push(...data.payload);
 
         const returnObj = {
           pastEvents: groupEvents
@@ -68,21 +68,21 @@ const fetchPastEvents = (fullURL, groupEvents, apiKey) => {
         return fetchPastEvents(nextLink, groupEvents);
       });
     })
-    .catch(err => console.error('fetch operation problem...', err))
+    .catch(err => console.error('fetch operation problem...', err));
 };
 
-export default (url = null, apiKey = null) => {
+export default (urlArg = null, apiKey = null) => {
   let urls;
-  if (url) {
+  if (urlArg) {
     Util.assertNotBlank('apiKey', apiKey);
-    urls = [url];
+    urls = [urlArg];
   } else {
     urls = signedURLs.map(({ pastEvents }) => pastEvents);
   }
 
   return urls.map((url) => {
-      let groupEvents = [];
+    const groupEvents = [];
 
-      return fetchPastEvents(url, groupEvents, apiKey);
-    });
+    return fetchPastEvents(url, groupEvents, apiKey);
+  });
 };

@@ -52,9 +52,9 @@ const fetchPastEvents = (fullURL, eventsByIDOfGroup, groupEvents) => {
 
           if (eventsByIDOfGroup.byID[ev.id]) {
             return { pastEvents: groupEvents };
-          } else {
-            groupEvents.push(ev);
           }
+
+          groupEvents.push(ev);
         }
 
         const returnObj = { pastEvents: groupEvents };
@@ -67,7 +67,7 @@ const fetchPastEvents = (fullURL, eventsByIDOfGroup, groupEvents) => {
         return fetchPastEvents(nextLink, eventsByIDOfGroup, groupEvents);
       });
     })
-    .catch(err => console.error('fetch operation problem...', err))
+    .catch(err => console.error('fetch operation problem...', err));
 };
 
 const eventsByID = ({ pastEvents, groupID, groupName }) => ({
@@ -80,13 +80,13 @@ const eventsByID = ({ pastEvents, groupID, groupName }) => ({
   }, {})
 });
 
-export default (allMeetupDataFromJSON) => {
-  return signedURLs
+export default allMeetupDataFromJSON => (
+  signedURLs
     .map((signedURLFor) => {
       const id = signedURLFor.groupID;
       const meetupDataFromJSON = allMeetupDataFromJSON.find(
         group => group.main.body.id === id
-      )
+      );
 
       const eventsByIDOfGroup = eventsByID({
         pastEvents: meetupDataFromJSON.pastEvents,
@@ -94,9 +94,9 @@ export default (allMeetupDataFromJSON) => {
         groupName: signedURLFor.groupName
       });
 
-      let groupEvents = [];
+      const groupEvents = [];
       return fetchPastEvents(
         signedURLFor.pastEventsDesc, eventsByIDOfGroup, groupEvents
       );
-    });
-};
+    })
+);
