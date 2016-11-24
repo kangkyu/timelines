@@ -4,7 +4,6 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-// ...
 import dataFromJSON, { buildSeriesData, buildSeries } from './data/index';
 import latestPastEvents from './data/past_events/latest';
 import pastEvents from './data/past_events/index';
@@ -13,6 +12,29 @@ import Timeline from './components/Timeline';
 import Input, { API_KEY_LOCAL_STORE_KEY } from './components/Input';
 
 import * as Util from './util/index';
+
+const httpRegexp = new RegExp('https://www.meetup.com/');
+
+const getGroupSpecifier = (inputText) => {
+  Util.assertNotBlank('groupSpecifier', inputText);
+
+  if (httpRegexp.test(inputText)) {
+    return inputText.replace(httpRegexp, '')
+                    .replace(/^([^\/]+)\/?.*$/, '$1');
+  }
+
+  return inputText;
+};
+
+const getApiKey = (inputText) => {
+  if (Util.isBlank(inputText)) {
+    const apiKeyFromLocalStore = localStorage.getItem(API_KEY_LOCAL_STORE_KEY);
+    Util.assertNotBlank('API key', apiKeyFromLocalStore);
+    return apiKeyFromLocalStore;
+  }
+
+  return inputText;
+};
 
 export default class App extends React.Component {
   constructor(props) {
@@ -98,19 +120,13 @@ export default class App extends React.Component {
   }
 
   handleClick() {
-    const groupSpecifier = this.state.input.groupSpecifier;
-    let apiKey = this.state.input.apiKey;
-
-    Util.assertNotBlank('groupSpecifier', groupSpecifier);
-
-    if (Util.isBlank(apiKey)) {
-      apiKey = localStorage.getItem(API_KEY_LOCAL_STORE_KEY);
-      Util.assertNotBlank('apiKey', apiKey);
-    }
+    const { groupSpecifier, apiKey } = this.state.input;
+    const actualGroupSpecifier = getGroupSpecifier(groupSpecifier);
+    const actualApiKey = getApiKey(apiKey);
 
     localStorage.setItem(API_KEY_LOCAL_STORE_KEY, apiKey);
 
-    Promise.all(pastEvents(groupSpecifier, apiKey)).then((results) => {
+    Promise.all(pastEvents(actualGroupSpecifier, actualApiKey)).then((results) => {
       this.setState({
         ...this.state,
 
