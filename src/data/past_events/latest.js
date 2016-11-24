@@ -2,7 +2,7 @@
 import 'isomorphic-fetch';
 
 import getNextLink from './next_link';
-import proxyURL from './proxy_url';
+import buildRequest from './request';
 import signedURLs from './signed_urls.json';
 
 const getData = (json) => {
@@ -35,10 +35,11 @@ const ok = (response) => {
 };
 
 const fetchPastEvents = (fullURL, eventsByIDOfGroup, groupEvents) => {
-  const url = proxyURL(fullURL);
+  const request = buildRequest(fullURL);
+  // const request = fullURL;
 
-  return fetch(url)
-    .then(response => (ok(response) ? response : Promise.reject('...')))
+  return fetch(request)
+    .then(response => (ok(response) ? response : Promise.reject(response)))
     .then((response) => {
       const headers = response.headers;
 

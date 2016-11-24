@@ -21,7 +21,7 @@ const getApiKeyPlaceHolder = () => {
   const defaultText = 'Your meetup.com API key';
   const apiKey = localStorage.getItem(API_KEY_LOCAL_STORE_KEY);
 
-  if (!apiKey || apiKey.trim() === '') return defaultText;
+  if (!apiKey || apiKey === 'undefined' || apiKey.trim() === '') return defaultText;
 
   return apiKey;
 };
@@ -39,37 +39,40 @@ export default class Input extends React.Component {
   }
 
   render() {
-    const { handleChangeGroupSpecifier, handleChangeApiKey } = this.props;
+    console.warn('CORS...');
+    return null;
 
-    const apiKeyPlaceHolder = getApiKeyPlaceHolder();
+    // const { handleChangeGroupSpecifier, handleChangeApiKey } = this.props;
 
-    return (
-      <div style={style}>
-        <input
-          type="text"
-          onChange={handleChangeGroupSpecifier}
-          style={style.inputText}
-          placeholder="meetup.com group URL or URL name"
-          ref={(input) => { this.inputGroupSpecifier = input; }}
-        />
+    // const apiKeyPlaceHolder = getApiKeyPlaceHolder();
 
-        <input
-          type="text"
-          onChange={handleChangeApiKey}
-          style={style.inputText}
-          placeholder={apiKeyPlaceHolder}
-          ref={(input) => { this.inputApiKeyInput = input; }}
-        />
+    // return (
+    //   <div style={style}>
+    //     <input
+    //       type="text"
+    //       onChange={handleChangeGroupSpecifier}
+    //       style={style.inputText}
+    //       placeholder="meetup.com group URL or URL name"
+    //       ref={(input) => { this.inputGroupSpecifier = input; }}
+    //     />
 
-        <button
-          type="input"
-          onClick={this.handleClickWrapper}
-          style={style.button}
-        >
-          Submit
-        </button>
-      </div>
-    );
+    //     <input
+    //       type="text"
+    //       onChange={handleChangeApiKey}
+    //       style={style.inputText}
+    //       placeholder={apiKeyPlaceHolder}
+    //       ref={(input) => { this.inputApiKeyInput = input; }}
+    //     />
+
+    //     <button
+    //       type="input"
+    //       onClick={this.handleClickWrapper}
+    //       style={style.button}
+    //     >
+    //       Submit
+    //     </button>
+    //   </div>
+    // );
   }
 }
 

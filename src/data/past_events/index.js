@@ -2,7 +2,7 @@
 import 'isomorphic-fetch';
 
 import getNextLink from './next_link';
-import proxyURL from './proxy_url';
+import { proxiedURL, reqInit } from './request';
 import signedURLs from './signed_urls.json';
 
 import * as Util from '../../util/index';
@@ -37,17 +37,19 @@ const ok = (response) => {
 };
 
 const buildURL = (fullURL, apiKey) => {
-  const proxify = proxyURL(fullURL);
-  if (!apiKey) return proxify;
+  const proxify = proxiedURL(fullURL);
+  // if (!apiKey) return proxify;
 
   const urlWithAccessToken = `${proxify}/events?key=${apiKey}&photo-host=public&sign=true&page=200&status=past&omit=description,how_to_find_us`;
-  return urlWithAccessToken;
+
+  return new Request(urlWithAccessToken, reqInit);
+  // return [urlWithAccessToken, requestArgs[1]];
 };
 
 const fetchPastEvents = (fullURL, groupEvents, apiKey) => {
-  const url = buildURL(fullURL, apiKey);
+  const request = buildURL(fullURL, apiKey);
 
-  return fetch(url)
+  return fetch(request)
     .then(response => (ok(response) ? response : Promise.reject('...')))
     .then((response) => {
       const headers = response.headers;
