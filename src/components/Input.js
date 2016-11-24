@@ -1,6 +1,8 @@
 
 import React, { PropTypes } from 'react';
 
+export const API_KEY_LOCAL_STORE_KEY = 'API_KEY';
+
 const fontSize = 'large';
 
 const style = {
@@ -13,6 +15,15 @@ const style = {
   },
 
   button: { fontSize }
+};
+
+const getApiKeyPlaceHolder = () => {
+  const defaultText = 'Your meetup.com API key';
+  const apiKey = localStorage.getItem(API_KEY_LOCAL_STORE_KEY);
+
+  if (!apiKey || apiKey.trim() === '') return defaultText;
+
+  return apiKey;
 };
 
 export default class Input extends React.Component {
@@ -28,10 +39,9 @@ export default class Input extends React.Component {
   }
 
   render() {
-    const {
-      handleChangeGroupSpecifier,
-      handleChangeApiKey
-    } = this.props;
+    const { handleChangeGroupSpecifier, handleChangeApiKey } = this.props;
+
+    const apiKeyPlaceHolder = getApiKeyPlaceHolder();
 
     return (
       <div style={style}>
@@ -47,7 +57,7 @@ export default class Input extends React.Component {
           type="text"
           onChange={handleChangeApiKey}
           style={style.inputText}
-          placeholder="Your meetup.com API key"
+          placeholder={apiKeyPlaceHolder}
           ref={(input) => { this.inputApiKeyInput = input; }}
         />
 

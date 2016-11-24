@@ -10,7 +10,7 @@ import latestPastEvents from './data/past_events/latest';
 import pastEvents from './data/past_events/index';
 
 import Timeline from './components/Timeline';
-import Input from './components/Input';
+import Input, { API_KEY_LOCAL_STORE_KEY } from './components/Input';
 
 import * as Util from './util/index';
 
@@ -103,7 +103,6 @@ export default class App extends React.Component {
 
     Util.assertNotBlank('groupSpecifier', groupSpecifier);
 
-    const API_KEY_LOCAL_STORE_KEY = 'API_KEY';
     if (Util.isBlank(apiKey)) {
       apiKey = localStorage.getItem(API_KEY_LOCAL_STORE_KEY);
       Util.assertNotBlank('apiKey', apiKey);
