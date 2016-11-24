@@ -1,26 +1,34 @@
-import React from 'react';
+
+import React, { PropTypes } from 'react';
 import Highcharts from 'highcharts';
-
-import 'isomorphic-fetch';
-
-import data from '../data/index';
 
 const container = 'chart';
 
-export const info = (obj) => {
-  console.log(obj);
-};
-
 export default class Timeline extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...data, options: data.forChart
+  static propTypes() {
+    return {
+      options: PropTypes.shape().isRequired
     };
   }
 
   componentDidMount() {
-    this.chart = new Highcharts.Chart(container, this.state.options);
+    this.chart = new Highcharts.Chart(container, this.props.options);
+  }
+
+  componentDidUpdate() {
+    const { doNotUpdate, incrementalUpdate, options } = this.props;
+
+    if (doNotUpdate) return null;
+
+    if (incrementalUpdate) {
+      this.chart.series.forEach((ser, ix) => {
+        // http://api.highcharts.com/highcharts/Series.setData
+        ser.setData(this.props.options.series[ix].data);
+      });
+    } else {
+      this.chart.destroy();
+      this.chart = new Highcharts.Chart(container, options);
+    }
   }
 
   componentWillUnmount() {
@@ -28,7 +36,6 @@ export default class Timeline extends React.Component {
   }
 
   render() {
-    info({ state: this.state });
     return (
       <div id={container} />
     );

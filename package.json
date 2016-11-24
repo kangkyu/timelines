@@ -1,4 +1,5 @@
 {
+  "proxy": "https://api.meetup.com",
   "name": "meetup_timeline_and_map",
   "homepage": "https://server-monitor.github.io/timelines",
   "version": "0.1.0",

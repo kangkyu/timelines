@@ -1,20 +1,20 @@
 
-import highChartsDefault from './high_charts_default';
-import meetupData from './from_ruby.json';
+import highChartsConfig from './high_charts_config';
+import meetupDataFromJSON from './from_ruby.json';
 
-const series = (() => (
-  meetupData.map(groupData => ({
-    name: groupData.main.body.name,
+export const buildSeriesData = pastEvent => ({
+  x: pastEvent.time,
+  y: pastEvent.yes_rsvp_count,
+  name: pastEvent.name,
+  who: pastEvent.group.who,
+  link: pastEvent.link,
+  venueName: ((pastEvent.venue && pastEvent.venue.name) || '')
+});
 
-    data: groupData.pastEvents.map(pev => ({
-      x: pev.time,
-      y: pev.yes_rsvp_count,
-      name: pev.name,
-      who: groupData.main.body.who,
-      link: pev.link,
-      venueName: ((pev.venue && pev.venue.name) || '')
-    })),
-
+export const buildSeries = allGroupData => (
+  allGroupData.map(dataOfOneGroup => ({
+    name: dataOfOneGroup.pastEvents[0].group.name,
+    data: dataOfOneGroup.pastEvents.map(pev => buildSeriesData(pev)),
     cursor: 'pointer',
     point: {
       events: {
@@ -25,12 +25,36 @@ const series = (() => (
       },
     }
   }))
-))();
+);
+
+export const buildDefaultSeries = (meetupData = meetupDataFromJSON) => (
+  meetupData.map((groupData, ix) => {
+    const groupDataFromJSON = meetupDataFromJSON[ix];
+
+    return {
+      name: groupDataFromJSON.main.body.name,
+
+      data: groupData.pastEvents.map(pev => buildSeriesData(
+        pev, groupDataFromJSON.main.body.who
+      )),
+
+      cursor: 'pointer',
+      point: {
+        events: {
+          click() {
+            const link = this.link;
+            window.open(link, '_blank');
+          }
+        },
+      }
+    };
+  })
+);
 
 export default {
-  meetupData,
-  highChartsDefault,
+  meetupDataFromJSON,
+  highChartsConfig,
   forChart: {
-    ...highChartsDefault, series
+    ...highChartsConfig, series: buildDefaultSeries()
   }
 };

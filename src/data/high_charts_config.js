@@ -9,7 +9,39 @@ const pointFormat = () => (
 export default {
   chart: {
     zoomType: 'x',
+    height: 520
   },
+
+  plotOptions: {
+    series: {
+      events: {
+        legendItemClick() {
+          const series = this.chart.series;
+          const hideAll = () => { series.forEach((pt) => { pt.hide(); }); };
+
+          const resetButton = document.getElementsByClassName('highcharts-button')[0];
+
+          if (series.find(pt => pt.visible === false)) {
+            // Toggle if visible, go back to original state.
+            if (this.visible) {
+              series.forEach((pt) => { pt.show(); });
+            } else {
+              hideAll();
+              this.show();
+              if (resetButton) resetButton.onclick();
+            }
+          } else {
+            hideAll();
+            this.show();
+            if (resetButton) resetButton.onclick();
+          }
+
+          return false;
+        }
+      }
+    }
+  },
+
 
   title: { text: 'Meetup Events Timelines' },
   // subtitle: { text: 'Los Angeles and surrounding areas' },
