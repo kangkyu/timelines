@@ -1,11 +1,12 @@
 
 import * as helloMain from 'hellojs';
 
-const network = 'meetup';
+export const networkString = 'meetup';
+export const getUserSession = () => helloMain.getAuthResponse(networkString);
 
 const meetupInit = (hello) => {
   hello.init({
-    [network]: {
+    [networkString]: {
       name: 'Timelines',
 
       oauth: {
@@ -32,5 +33,3 @@ const meetupInit = (hello) => {
 };
 
 meetupInit(helloMain);
-
-export default network;

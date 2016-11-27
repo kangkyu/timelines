@@ -5,8 +5,7 @@ const commonPropTypes = {
   online: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
-  network: PropTypes.string.isRequired,
-  // session: PropTypes.shape()
+  network: PropTypes.string.isRequired
 };
 
 const InOrOut = ({ online, login, logout, network }) => {

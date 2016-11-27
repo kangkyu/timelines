@@ -2,10 +2,11 @@
 import 'isomorphic-fetch';
 
 import getNextLink from './next_link';
-import buildRequest from './request';
 import signedURLs from './signed_urls.json';
 
-import { getMeetupSession } from '../../containers/Login';
+import { getUserSession } from '../../containers/meetup';
+import * as Util from '../../util/index';
+import { URLFor, proxiedPath } from '../url_util';
 
 const getData = (json) => {
   const upcomingEventFound = json.find(ev => ev.status === 'upcoming');
@@ -36,53 +37,44 @@ const ok = (response) => {
   return response;
 };
 
-// const fetchPastEvents = (fullURL, eventsByIDOfGroup, groupEvents) => {
-//   const request = buildRequest(fullURL);
-  // const request = fullURL;
+const fetchPastEvents = ({
+  signedURLForPastEventsDesc,
+  groupName,
+  eventsByIDOfGroup,
+  groupEvents
+}) => {
+  const session = getUserSession();
 
-const fetchPastEvents = (group, eventsByIDOfGroup, groupEvents) => {
-  const session = getMeetupSession();
+  let url;
 
-  let request;
-
-  const nodeEnv = process && process.env && process.env.NODE_ENV;
-
-  if (nodeEnv && nodeEnv === 'development') {
-    request = buildRequest(group.pastEventsDesc);
-    // request = new Request(group.pastEventsDesc);
+  if (Util.isDevEnv()) {
+    url = proxiedPath(signedURLForPastEventsDesc);
   } else {
-    if (!session) return null;
-
-    request = `https://api.meetup.com/${group.groupName}/events?&access_token=${session.access_token}&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
-    // const headers = new Headers({
-    //   Authorization: `Bearer ${session.access_token}`
-    // });
-
-    // const url = `https://api.meetup.com/${group.groupName}/events?&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
-    // request = new Request(url, {
-    //   headers,
-    //   method: 'GET',
-    //   mode: 'cors',
-    //   cache: 'default'
-    // });
+    url = URLFor.events(groupName, session.access_token);
   }
 
-  // sign: true,
-  // 'photo-host' => 'public',
-  // page: 200,
-  // status: 'past',
-  // omit: 'description,how_to_find_us'
+  // const nodeEnv = process && process.env && process.env.NODE_ENV;
 
-  // const reqInit = {
-  //   Authorization: `Bearer ${session.access_token}`
-  // };
+  // if (nodeEnv && nodeEnv === 'development') {
+  //   request = buildRequest(group.pastEventsDesc);
+  // } else {
+  //   if (!session) return null;
 
-  // const url = `https://api.meetup.com/${groupName}/events?&sign=true&photo-host=public&page=200&status=past&omit=description,how_to_find_us`;
-  // const url = `https://api.meetup.com/${groupName}/events?&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
+  //   request = `https://api.meetup.com/${group.groupName}/events?&access_token=${session.access_token}&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
+  //   // const headers = new Headers({
+  //   //   Authorization: `Bearer ${session.access_token}`
+  //   // });
 
-  // const request = buildRequest(fullURL);
+  //   // const url = `https://api.meetup.com/${group.groupName}/events?&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
+  //   // request = new Request(url, {
+  //   //   headers,
+  //   //   method: 'GET',
+  //   //   mode: 'cors',
+  //   //   cache: 'default'
+  //   // });
+  // }
 
-  return fetch(request)
+  return fetch(url)
     .then(response => (ok(response) ? response : Promise.reject(response)))
     .then((response) => {
       const headers = response.headers;
@@ -126,28 +118,28 @@ const eventsByID = ({ pastEvents, groupID, groupName }) => ({
   }, {})
 });
 
-export default allMeetupDataFromJSON => (
+export default allGroupDataFromJSON => (
   signedURLs
     .map((signedURLFor) => {
       const id = signedURLFor.groupID;
-      const meetupDataFromJSON = allMeetupDataFromJSON.find(
+      const groupDataFromJSON = allGroupDataFromJSON.find(
         group => group.main.body.id === id
       );
 
+      const groupName = groupDataFromJSON.main.body.urlname;
       const eventsByIDOfGroup = eventsByID({
-        pastEvents: meetupDataFromJSON.pastEvents,
+        pastEvents: groupDataFromJSON.pastEvents,
         groupID: id,
-        groupName: signedURLFor.groupName
+        groupName
       });
 
       const groupEvents = [];
 
-      return fetchPastEvents(
-        signedURLFor, eventsByIDOfGroup, groupEvents
-      );
-
-      // return fetchPastEvents(
-      //   signedURLFor.pastEventsDesc, eventsByIDOfGroup, groupEvents
-      // );
+      return fetchPastEvents({
+        signedURLForPastEventsDesc: signedURLFor.pastEventsDesc,
+        groupName,
+        eventsByIDOfGroup,
+        groupEvents
+      });
     })
 );

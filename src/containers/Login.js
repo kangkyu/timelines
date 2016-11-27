@@ -3,16 +3,14 @@ import React from 'react';
 import * as hello from 'hellojs';
 
 import LoginComponent from '../components/Login';
-import meetup from './meetup';
+import { networkString, getUserSession } from './meetup';
 
-const NETWORK = meetup;
+const NETWORK = networkString;
 const CLIENT_ID = '1a61nl2lj8vejb3tg5irbq847s';
 const initArgs = [{ [NETWORK]: CLIENT_ID }];
 
-export const getMeetupSession = () => hello.getAuthResponse(NETWORK);
-
 const online = () => {
-  const session = getMeetupSession();
+  const session = getUserSession();
   const currentTime = (new Date()).getTime() / 1000;
   const isOnline = session && session.access_token && session.expires > currentTime;
   return isOnline;
@@ -21,8 +19,6 @@ const online = () => {
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
-
-    // hello.init(...initArgs);
 
     this.state = {
       network: NETWORK,
@@ -35,8 +31,6 @@ export default class Login extends React.Component {
   }
 
   login() {
-    // meetupInit(hello);
-
     hello.init(...initArgs);
 
     hello.login(NETWORK).then(() => {
