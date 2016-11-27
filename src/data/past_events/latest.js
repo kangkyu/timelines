@@ -58,7 +58,12 @@ const fetchPastEvents = (group, eventsByIDOfGroup, groupEvents) => {
     });
 
     const url = `https://api.meetup.com/${group.groupName}/events?&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
-    request = new Request(url, { headers });
+    request = new Request(url, {
+      headers,
+      method: 'GET',
+      mode: 'cors',
+      cache: 'default'
+    });
   }
 
   // sign: true,
