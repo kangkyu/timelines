@@ -116,6 +116,7 @@ const fetchPastEvents = ({
 
         return fetchPastEvents({
           link: nextLink,
+          groupName,
           nextOrPrevPageLink: true,
           groupEvents,
           apiKey
