@@ -113,14 +113,3 @@ Input.propTypes = {
   handleChangeGroupSpecifier: PropTypes.func.isRequired,
   handleClick: PropTypes.func.isRequired
 };
-
-// //
-// const abcd = 1234;
-//         <APIKey
-//           type="text"
-//           onChange={handleChangeApiKey}
-//           style={style.inputText}
-//           placeholder={apiKeyPlaceHolder}
-//           ref={(input) => { this.inputApiKeyInput = input; }}
-//           isDevEnv={isDevEnv}
-//         />
