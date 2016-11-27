@@ -9,7 +9,7 @@ import latestPastEvents from './data/past_events/latest';
 import pastEvents from './data/past_events/index';
 
 import Timeline from './components/Timeline';
-import Login from './containers/Login';
+import Login, { getMeetupSession } from './containers/Login';
 
 import Input, { API_KEY_LOCAL_STORE_KEY } from './components/Input';
 
@@ -144,11 +144,11 @@ export default class App extends React.Component {
   }
 
   render() {
-    const {
-      handleChangeGroupSpecifier,
-      handleChangeApiKey,
-      handleClick
-    } = this;
+    // const {
+    //   handleChangeGroupSpecifier,
+    //   handleChangeApiKey,
+    //   handleClick
+    // } = this;
 
     const { options, doNotUpdate, incrementalUpdate } = this.state;
 

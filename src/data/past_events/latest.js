@@ -5,6 +5,8 @@ import getNextLink from './next_link';
 import buildRequest from './request';
 import signedURLs from './signed_urls.json';
 
+import { getMeetupSession } from '../../containers/Login';
+
 const getData = (json) => {
   const upcomingEventFound = json.find(ev => ev.status === 'upcoming');
 
@@ -34,9 +36,43 @@ const ok = (response) => {
   return response;
 };
 
-const fetchPastEvents = (fullURL, eventsByIDOfGroup, groupEvents) => {
-  const request = buildRequest(fullURL);
+// const fetchPastEvents = (fullURL, eventsByIDOfGroup, groupEvents) => {
+//   const request = buildRequest(fullURL);
   // const request = fullURL;
+
+const fetchPastEvents = (group, eventsByIDOfGroup, groupEvents) => {
+  const session = getMeetupSession();
+
+  let request;
+
+  const nodeEnv = process && process.env && process.env.NODE_ENV;
+
+  if (nodeEnv && nodeEnv === 'development') {
+    request = buildRequest(group.pastEventsDesc);
+    // request = new Request(group.pastEventsDesc);
+  } else {
+    const headers = new Headers({
+      Authorization: `Bearer ${session.access_token}`
+    });
+
+    const url = `https://api.meetup.com/${group.groupName}/events?&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
+    request = new Request(url, { headers });
+  }
+
+  // sign: true,
+  // 'photo-host' => 'public',
+  // page: 200,
+  // status: 'past',
+  // omit: 'description,how_to_find_us'
+
+  // const reqInit = {
+  //   Authorization: `Bearer ${session.access_token}`
+  // };
+
+  // const url = `https://api.meetup.com/${groupName}/events?&sign=true&photo-host=public&page=200&status=past&omit=description,how_to_find_us`;
+  // const url = `https://api.meetup.com/${groupName}/events?&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
+
+  // const request = buildRequest(fullURL);
 
   return fetch(request)
     .then(response => (ok(response) ? response : Promise.reject(response)))
@@ -97,8 +133,13 @@ export default allMeetupDataFromJSON => (
       });
 
       const groupEvents = [];
+
       return fetchPastEvents(
-        signedURLFor.pastEventsDesc, eventsByIDOfGroup, groupEvents
+        signedURLFor, eventsByIDOfGroup, groupEvents
       );
+
+      // return fetchPastEvents(
+      //   signedURLFor.pastEventsDesc, eventsByIDOfGroup, groupEvents
+      // );
     })
 );

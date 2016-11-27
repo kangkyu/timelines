@@ -15,7 +15,7 @@ export const reqInit = {
   }),
   // mode: 'cors',
   cache: 'default',
-  credentials: 'include'
+  // credentials: 'include'
 };
 
 export default (inputURL) => {

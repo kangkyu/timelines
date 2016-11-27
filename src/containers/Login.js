@@ -9,8 +9,10 @@ const NETWORK = meetup;
 const CLIENT_ID = '1a61nl2lj8vejb3tg5irbq847s';
 const initArgs = [{ [NETWORK]: CLIENT_ID }];
 
+export const getMeetupSession = () => hello.getAuthResponse(NETWORK);
+
 const online = () => {
-  const session = hello.getAuthResponse(NETWORK);
+  const session = getMeetupSession();
   const currentTime = (new Date()).getTime() / 1000;
   const isOnline = session && session.access_token && session.expires > currentTime;
   return isOnline;
