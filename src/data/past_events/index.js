@@ -59,6 +59,19 @@ const eventsURL = (groupName, apiKey) => {
   return url;
 };
 
+const eventsURLOAuth = (groupName, accessToken) => {
+  const url = new URL('https://api.meetup.com');
+  url.pathname = `${groupName}/events`;
+
+  const query = { access_token: accessToken, ...pastEventsQueryParams };
+
+  Object.keys(query).forEach(
+    key => url.searchParams.append(key, query[key])
+  );
+
+  return url;
+};
+
 // const buildURL = (fullURL, apiKey) => {
 //   // const proxify = proxiedURL(fullURL);
 //   // if (!apiKey) return proxify;
@@ -86,7 +99,7 @@ const fetchPastEvents = ({
   } else if (nextOrPrevPageLink) {
     url = link;
   } else {
-    url = eventsURL(groupName, session.access_token);
+    url = eventsURLOAuth(groupName, session.access_token);
   }
 
   // if (Util.isDevEnv()) {
