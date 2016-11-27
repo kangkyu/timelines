@@ -1,6 +1,6 @@
 {
   "proxy": "https://api.meetup.com",
-  "name": "meetup_timeline_and_map",
+  "name": "Timelines",
   "homepage": "https://server-monitor.github.io/timelines",
   "version": "0.1.0",
   "private": true,
@@ -9,6 +9,7 @@
     "react-scripts": "0.7.0"
   },
   "dependencies": {
+    "hellojs": "^1.14.0",
     "highcharts": "^5.0.2",
     "isomorphic-fetch": "^2.2.1",
     "react": "^15.3.2",
