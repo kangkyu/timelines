@@ -158,7 +158,7 @@ export default class App extends React.Component {
       handleClick
     } = this;
 
-    const { options, doNotUpdate, incrementalUpdate, isDevEnv } = this.state;
+    const { options, doNotUpdate, incrementalUpdate, isDevEnv, userSession } = this.state;
 
     return (
       <div className="App">
@@ -178,6 +178,7 @@ export default class App extends React.Component {
           handleChangeGroupSpecifier={handleChangeGroupSpecifier}
           handleChangeApiKey={handleChangeApiKey}
           handleClick={handleClick}
+          userSession={userSession}
         />
 
         <Login isDevEnv={isDevEnv} />

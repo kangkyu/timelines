@@ -1,6 +1,15 @@
 
 import React, { PropTypes } from 'react';
 
+import { getUserSession } from '../containers/meetup';
+
+const online = () => {
+  const session = getUserSession();
+  const currentTime = (new Date()).getTime() / 1000;
+  const isOnline = session && session.access_token && session.expires > currentTime;
+  return isOnline;
+};
+
 export const API_KEY_LOCAL_STORE_KEY = 'API_KEY';
 
 const fontSize = 'large';
@@ -68,6 +77,8 @@ export default class Input extends React.Component {
     // return null;
 
     const { handleChangeGroupSpecifier, handleChangeApiKey, isDevEnv } = this.props;
+
+    if (!online() && !isDevEnv) return null;
 
     return (
       <div style={style}>
