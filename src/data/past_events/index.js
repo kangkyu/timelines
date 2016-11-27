@@ -86,7 +86,7 @@ const fetchPastEvents = ({
   } else if (nextOrPrevPageLink) {
     url = link;
   } else {
-    url = URLFor.events(groupName, session.access_token);
+    url = eventsURL(groupName, session.access_token);
   }
 
   // if (Util.isDevEnv()) {
