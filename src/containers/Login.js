@@ -61,7 +61,12 @@ export default class Login extends React.Component {
         logout={this.logout}
         network={this.state.network}
         session={this.state.session}
+        isDevEnv={this.props.isDevEnv}
       />
     );
   }
 }
+
+Login.propTypes = {
+  isDevEnv: React.PropTypes.bool
+};

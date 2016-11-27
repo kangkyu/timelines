@@ -152,13 +152,13 @@ export default class App extends React.Component {
   }
 
   render() {
-    // const {
-    //   handleChangeGroupSpecifier,
-    //   handleChangeApiKey,
-    //   handleClick
-    // } = this;
+    const {
+      handleChangeGroupSpecifier,
+      handleChangeApiKey,
+      handleClick
+    } = this;
 
-    const { options, doNotUpdate, incrementalUpdate } = this.state;
+    const { options, doNotUpdate, incrementalUpdate, isDevEnv } = this.state;
 
     return (
       <div className="App">
@@ -173,7 +173,14 @@ export default class App extends React.Component {
           incrementalUpdate={incrementalUpdate}
         />
 
-        <Login />
+        <Input
+          isDevEnv={isDevEnv}
+          handleChangeGroupSpecifier={handleChangeGroupSpecifier}
+          handleChangeApiKey={handleChangeApiKey}
+          handleClick={handleClick}
+        />
+
+        <Login isDevEnv={isDevEnv} />
       </div>
     );
   }

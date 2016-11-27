@@ -5,10 +5,11 @@ const commonPropTypes = {
   online: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
-  network: PropTypes.string.isRequired
+  network: PropTypes.string.isRequired,
+  isDevEnv: PropTypes.bool
 };
 
-const InOrOut = ({ online, login, logout, network }) => {
+const InOrOut = ({ online, login, logout, network, isDevEnv }) => {
   if (online()) {
     return (
       <div>
@@ -18,10 +19,12 @@ const InOrOut = ({ online, login, logout, network }) => {
     );
   }
 
+  const msg = isDevEnv ? 'No log in required under dev env' : `To see more updated data, log in to your ${network} account`;
+
   return (
     <div>
-      <p>To see more updated data, log in to your {network} account</p>
-      <button onClick={login}>Login</button>
+      <p>{msg}</p>
+      <button onClick={login} disabled={isDevEnv} >Login</button>
     </div>
   );
 };
@@ -34,13 +37,14 @@ const style = {
   // border: '2px solid red'
 };
 
-const LoginComponent = ({ online, login, logout, network }) => (
+const LoginComponent = ({ online, login, logout, network, isDevEnv }) => (
   <div style={style}>
     <InOrOut
       online={online}
       login={login}
       logout={logout}
       network={network}
+      isDevEnv={isDevEnv}
     />
   </div>
 );

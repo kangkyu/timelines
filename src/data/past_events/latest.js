@@ -38,7 +38,8 @@ const ok = (response) => {
 };
 
 const fetchPastEvents = ({
-  signedURLForPastEventsDesc,
+  link,
+  nextOrPrevPageLink,
   groupName,
   eventsByIDOfGroup,
   groupEvents
@@ -48,31 +49,12 @@ const fetchPastEvents = ({
   let url;
 
   if (Util.isDevEnv()) {
-    url = proxiedPath(signedURLForPastEventsDesc);
+    url = proxiedPath(link);
+  } else if (nextOrPrevPageLink) {
+    url = link;
   } else {
     url = URLFor.events(groupName, session.access_token);
   }
-
-  // const nodeEnv = process && process.env && process.env.NODE_ENV;
-
-  // if (nodeEnv && nodeEnv === 'development') {
-  //   request = buildRequest(group.pastEventsDesc);
-  // } else {
-  //   if (!session) return null;
-
-  //   request = `https://api.meetup.com/${group.groupName}/events?&access_token=${session.access_token}&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
-  //   // const headers = new Headers({
-  //   //   Authorization: `Bearer ${session.access_token}`
-  //   // });
-
-  //   // const url = `https://api.meetup.com/${group.groupName}/events?&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
-  //   // request = new Request(url, {
-  //   //   headers,
-  //   //   method: 'GET',
-  //   //   mode: 'cors',
-  //   //   cache: 'default'
-  //   // });
-  // }
 
   return fetch(url)
     .then(response => (ok(response) ? response : Promise.reject(response)))
@@ -102,7 +84,13 @@ const fetchPastEvents = ({
         const nextLink = getNextLink(headers);
         if (!nextLink) return returnObj;
 
-        return fetchPastEvents(nextLink, eventsByIDOfGroup, groupEvents);
+        return fetchPastEvents({
+          link: nextLink,
+          nextOrPrevPageLink: true,
+          groupName,
+          eventsByIDOfGroup,
+          groupEvents
+        });
       });
     })
     .catch(err => console.error('fetch operation problem...', err));
@@ -126,6 +114,8 @@ export default allGroupDataFromJSON => (
         group => group.main.body.id === id
       );
 
+      if (!groupDataFromJSON) throw Error('we\'re boned');
+
       const groupName = groupDataFromJSON.main.body.urlname;
       const eventsByIDOfGroup = eventsByID({
         pastEvents: groupDataFromJSON.pastEvents,
@@ -136,7 +126,8 @@ export default allGroupDataFromJSON => (
       const groupEvents = [];
 
       return fetchPastEvents({
-        signedURLForPastEventsDesc: signedURLFor.pastEventsDesc,
+        link: signedURLFor.pastEventsDesc,
+        nextOrPrevPageLink: false,
         groupName,
         eventsByIDOfGroup,
         groupEvents

@@ -26,6 +26,31 @@ const getApiKeyPlaceHolder = () => {
   return apiKey;
 };
 
+const commonPropTypes = {
+  handleChangeApiKey: PropTypes.func.isRequired,
+  isDevEnv: PropTypes.bool
+};
+
+const APIKey = ({ handleChangeApiKey, isDevEnv, refFunc }) => {
+  const apiKeyPlaceHolder = getApiKeyPlaceHolder();
+
+  if (!isDevEnv) return null;
+
+  return (
+    <input
+      type="text"
+      onChange={handleChangeApiKey}
+      style={style.inputText}
+      placeholder={apiKeyPlaceHolder}
+      ref={refFunc}
+    />
+  );
+};
+
+APIKey.propTypes = {
+  ...commonPropTypes, refFunc: PropTypes.func.isRequired
+};
+
 export default class Input extends React.Component {
   constructor(props) {
     super(props);
@@ -39,45 +64,52 @@ export default class Input extends React.Component {
   }
 
   render() {
-    console.warn('CORS...');
-    return null;
+    // console.warn('CORS...');
+    // return null;
 
-    // const { handleChangeGroupSpecifier, handleChangeApiKey } = this.props;
+    const { handleChangeGroupSpecifier, handleChangeApiKey, isDevEnv } = this.props;
 
-    // const apiKeyPlaceHolder = getApiKeyPlaceHolder();
+    return (
+      <div style={style}>
+        <input
+          type="text"
+          onChange={handleChangeGroupSpecifier}
+          style={style.inputText}
+          placeholder="meetup.com group URL or URL name"
+          ref={(input) => { this.inputGroupSpecifier = input; }}
+        />
 
-    // return (
-    //   <div style={style}>
-    //     <input
-    //       type="text"
-    //       onChange={handleChangeGroupSpecifier}
-    //       style={style.inputText}
-    //       placeholder="meetup.com group URL or URL name"
-    //       ref={(input) => { this.inputGroupSpecifier = input; }}
-    //     />
+        <APIKey
+          handleChangeApiKey={handleChangeApiKey}
+          isDevEnv={isDevEnv}
+          refFunc={(input) => { this.inputApiKeyInput = input; }}
+        />
 
-    //     <input
-    //       type="text"
-    //       onChange={handleChangeApiKey}
-    //       style={style.inputText}
-    //       placeholder={apiKeyPlaceHolder}
-    //       ref={(input) => { this.inputApiKeyInput = input; }}
-    //     />
-
-    //     <button
-    //       type="input"
-    //       onClick={this.handleClickWrapper}
-    //       style={style.button}
-    //     >
-    //       Submit
-    //     </button>
-    //   </div>
-    // );
+        <button
+          type="input"
+          onClick={this.handleClickWrapper}
+          style={style.button}
+        >
+          Submit
+        </button>
+      </div>
+    );
   }
 }
 
 Input.propTypes = {
+  ...commonPropTypes,
   handleChangeGroupSpecifier: PropTypes.func.isRequired,
-  handleChangeApiKey: PropTypes.func.isRequired,
   handleClick: PropTypes.func.isRequired
 };
+
+// //
+// const abcd = 1234;
+//         <APIKey
+//           type="text"
+//           onChange={handleChangeApiKey}
+//           style={style.inputText}
+//           placeholder={apiKeyPlaceHolder}
+//           ref={(input) => { this.inputApiKeyInput = input; }}
+//           isDevEnv={isDevEnv}
+//         />
