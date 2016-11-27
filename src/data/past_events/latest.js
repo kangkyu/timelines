@@ -51,6 +51,8 @@ const fetchPastEvents = (group, eventsByIDOfGroup, groupEvents) => {
     request = buildRequest(group.pastEventsDesc);
     // request = new Request(group.pastEventsDesc);
   } else {
+    if (!session) return null;
+
     const headers = new Headers({
       Authorization: `Bearer ${session.access_token}`
     });

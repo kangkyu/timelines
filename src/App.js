@@ -69,7 +69,12 @@ export default class App extends React.Component {
   // }
 
   componentWillMount() {
-    Promise.all(
+    const session = getMeetupSession();
+    const isDevEnv = process && process.env && process.env.NODE_ENV && process.env.NODE_ENV === 'development';
+
+    if (!isDevEnv && !session) return null;
+
+    return Promise.all(
       latestPastEvents(this.state.meetupDataFromJSON)
     ).then((results) => {
       const sortEventsByTimeAscending = results.map(
