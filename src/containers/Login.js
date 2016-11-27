@@ -28,6 +28,8 @@ export default class Login extends React.Component {
     };
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+
+    console.log({ session: this.state.session });
   }
 
   login() {
@@ -62,6 +64,7 @@ export default class Login extends React.Component {
         login={this.login}
         logout={this.logout}
         network={this.state.network}
+        session={this.state.session}
       />
     );
   }

@@ -14,7 +14,8 @@ export const reqInit = {
     'Content-Type': 'application/json'
   }),
   // mode: 'cors',
-  cache: 'default'
+  cache: 'default',
+  credentials: 'include'
 };
 
 export default (inputURL) => {

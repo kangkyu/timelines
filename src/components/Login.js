@@ -5,13 +5,15 @@ const commonPropTypes = {
   online: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
-  network: PropTypes.string.isRequired
+  network: PropTypes.string.isRequired,
+  session: PropTypes.shape()
 };
 
-const InOrOut = ({ online, login, logout, network }) => {
+const InOrOut = ({ online, login, logout, network, session }) => {
   if (online()) {
     return (
       <div>
+        <p>Logged in as {session}</p>
         <button onClick={logout}>Logout</button>
       </div>
     );
@@ -19,7 +21,8 @@ const InOrOut = ({ online, login, logout, network }) => {
 
   return (
     <div>
-      <button onClick={login}>Login to {network}</button>
+      <p>To see more updated data, log in to your {network} account</p>
+      <button onClick={login}>Login</button>
     </div>
   );
 };
@@ -32,15 +35,14 @@ const style = {
   // border: '2px solid red'
 };
 
-const LoginComponent = ({ online, login, logout, network }) => (
+const LoginComponent = ({ online, login, logout, network, session }) => (
   <div style={style}>
-    <p>To see more updated data, log in to your {network} account</p>
-
     <InOrOut
       online={online}
       login={login}
       logout={logout}
       network={network}
+      session={session}
     />
   </div>
 );
