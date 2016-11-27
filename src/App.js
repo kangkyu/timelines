@@ -130,14 +130,16 @@ export default class App extends React.Component {
   }
 
   handleClick() {
-    const { groupSpecifier, apiKey } = this.state.input;
+    const { input, isDevEnv } = this.state;
+    const { groupSpecifier, apiKey } = input;
     const actualGroupSpecifier = getGroupSpecifier(groupSpecifier);
-    const actualApiKey = getApiKey(apiKey);
+
+    const actualApiKey = isDevEnv ? getApiKey(apiKey) : null;
 
     localStorage.setItem(API_KEY_LOCAL_STORE_KEY, apiKey);
 
     Promise.all(pastEvents(
-      actualGroupSpecifier, actualApiKey, this.state.isDevEnv
+      actualGroupSpecifier, actualApiKey, isDevEnv
     )).then((results) => {
       this.setState({
         ...this.state,
