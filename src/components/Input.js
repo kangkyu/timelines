@@ -68,8 +68,8 @@ export default class Input extends React.Component {
 
   handleClickWrapper() {
     this.inputGroupSpecifier.value = '';
-    this.inputApiKeyInput.value = '';
     this.props.handleClick();
+    if (this.props.isDevEnv) this.inputApiKeyInput.value = '';
   }
 
   render() {
