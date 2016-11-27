@@ -136,7 +136,9 @@ export default class App extends React.Component {
 
     localStorage.setItem(API_KEY_LOCAL_STORE_KEY, apiKey);
 
-    Promise.all(pastEvents(actualGroupSpecifier, actualApiKey)).then((results) => {
+    Promise.all(pastEvents(
+      actualGroupSpecifier, actualApiKey, this.state.isDevEnv
+    )).then((results) => {
       this.setState({
         ...this.state,
 

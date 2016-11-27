@@ -125,10 +125,10 @@ const fetchPastEvents = ({
     .catch(err => console.error('fetch operation problem...', err));
 };
 
-export default (urlArg = null, apiKey = null, allGroupDataFromJSON = null) => {
+export default (urlArg = null, apiKey = null, isDevEnv = null, allGroupDataFromJSON = null) => {
   let urls;
   if (urlArg) {
-    Util.assertNotBlank('apiKey', apiKey);
+    if (isDevEnv) Util.assertNotBlank('apiKey', apiKey);
     urls = [{ link: null, groupName: urlArg }];
   } else {
     // urls = signedURLs.map(({ pastEvents }) => pastEvents);
