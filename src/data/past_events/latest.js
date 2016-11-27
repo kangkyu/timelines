@@ -53,17 +53,18 @@ const fetchPastEvents = (group, eventsByIDOfGroup, groupEvents) => {
   } else {
     if (!session) return null;
 
-    const headers = new Headers({
-      Authorization: `Bearer ${session.access_token}`
-    });
+    request = `https://api.meetup.com/${group.groupName}/events?&access_token=${session.access_token}&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
+    // const headers = new Headers({
+    //   Authorization: `Bearer ${session.access_token}`
+    // });
 
-    const url = `https://api.meetup.com/${group.groupName}/events?&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
-    request = new Request(url, {
-      headers,
-      method: 'GET',
-      mode: 'cors',
-      cache: 'default'
-    });
+    // const url = `https://api.meetup.com/${group.groupName}/events?&sign=true&photo-host=public&page=200&desc=true&status=past&omit=description,how_to_find_us`;
+    // request = new Request(url, {
+    //   headers,
+    //   method: 'GET',
+    //   mode: 'cors',
+    //   cache: 'default'
+    // });
   }
 
   // sign: true,
