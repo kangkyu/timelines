@@ -6,14 +6,14 @@ const commonPropTypes = {
   login: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   network: PropTypes.string.isRequired,
-  session: PropTypes.shape()
+  // session: PropTypes.shape()
 };
 
-const InOrOut = ({ online, login, logout, network, session }) => {
+const InOrOut = ({ online, login, logout, network }) => {
   if (online()) {
     return (
       <div>
-        <p>Logged in as {session}</p>
+        <p>Logged in</p>
         <button onClick={logout}>Logout</button>
       </div>
     );
@@ -35,14 +35,13 @@ const style = {
   // border: '2px solid red'
 };
 
-const LoginComponent = ({ online, login, logout, network, session }) => (
+const LoginComponent = ({ online, login, logout, network }) => (
   <div style={style}>
     <InOrOut
       online={online}
       login={login}
       logout={logout}
       network={network}
-      session={session}
     />
   </div>
 );
