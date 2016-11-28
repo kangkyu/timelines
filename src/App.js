@@ -5,8 +5,9 @@ import logo from './logo.svg';
 import './App.css';
 
 import dataFromJSON, { buildSeriesData, buildSeries } from './data/index';
-import latestPastEvents from './data/past_events/latest';
-import pastEvents from './data/past_events/index';
+
+import latestPastEventsDescending from './data/past_events/latest_descending';
+import pastEventsFromBeginningToEnd from './data/past_events/from_beginning_to_end';
 
 import Timeline from './components/Timeline';
 import Login from './containers/Login';
@@ -78,7 +79,7 @@ export default class App extends React.Component {
     if (!isDevEnv && !userSession) return null;
 
     return Promise.all(
-      latestPastEvents(this.state.meetupDataFromJSON)
+      latestPastEventsDescending(this.state.meetupDataFromJSON)
     ).then((results) => {
       const sortEventsByTimeAscending = results.map(
         result => result.pastEvents.reverse()
@@ -138,8 +139,8 @@ export default class App extends React.Component {
 
     localStorage.setItem(API_KEY_LOCAL_STORE_KEY, apiKey);
 
-    Promise.all(pastEvents(
-      actualGroupSpecifier, actualApiKey, isDevEnv
+    Promise.all(pastEventsFromBeginningToEnd(
+      actualGroupSpecifier, actualApiKey
     )).then((results) => {
       this.setState({
         ...this.state,

@@ -15,8 +15,6 @@ export const API_KEY_LOCAL_STORE_KEY = 'API_KEY';
 const fontSize = 'large';
 
 const style = {
-  // border: 'solid 2px red',
-
   inputText: {
     margin: '8px',
     width: '310px',
@@ -73,9 +71,6 @@ export default class Input extends React.Component {
   }
 
   render() {
-    // console.warn('CORS...');
-    // return null;
-
     const { handleChangeGroupSpecifier, handleChangeApiKey, isDevEnv } = this.props;
 
     if (!online() && !isDevEnv) return null;

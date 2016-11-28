@@ -34,7 +34,6 @@ InOrOut.propTypes = commonPropTypes;
 const style = {
   marginTop: '20px',
   paddingBottom: '20px',
-  // border: '2px solid red'
 };
 
 const LoginComponent = ({ online, login, logout, network, isDevEnv }) => (

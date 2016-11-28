@@ -1,59 +1,45 @@
 
-import 'isomorphic-fetch';
-
-import getNextLink from './next_link';
 import signedURLs from './signed_urls.json';
+import {
+  ok, removeUpcomingEvents, proxiedPath, buildPastEventsURL
+} from './util';
 
 import { getUserSession } from '../../containers/meetup';
-import * as Util from '../../util/index';
-import { URLFor, proxiedPath } from '../url_util';
+import { isDevEnv } from '../../util/index';
+import getNextLink from './next_link';
 
-const getData = (json) => {
-  const upcomingEventFound = json.find(ev => ev.status === 'upcoming');
-
-  let data;
-  if (upcomingEventFound) {
-    data = json.filter(ev => ev.status === 'past');
-  } else {
-    data = json;
-  }
-
-  return {
-    payload: data,
-    upcomingEventFound
-  };
-};
-
-const ok = (response) => {
-  if (!response.ok) {
-    const { status, statusText, url } = response;
-    console.error(
-      'Response not OK\n',
-      `Status: ${status}, text: '${statusText}', URL: ...\n`,
-      url
-    );
-    return false;
-  }
-  return response;
-};
+const buildEventsByGroupIDHash = ({ pastEvents, groupID, groupName }) => ({
+  groupID,
+  groupName,
+  byID: pastEvents.reduce((acc, curr) => {
+    const newAcc = acc;
+    newAcc[curr.id] = curr;
+    return newAcc;
+  }, {})
+});
 
 const fetchPastEvents = ({
   link,
   nextOrPrevPageLink,
   groupName,
-  eventsByIDOfGroup,
+  eventsByGroupID,
   groupEvents
 }) => {
   const session = getUserSession();
 
   let url;
 
-  if (Util.isDevEnv()) {
+  if (isDevEnv()) {
     url = proxiedPath(link);
   } else if (nextOrPrevPageLink) {
     url = link;
   } else {
-    url = URLFor.events(groupName, session.access_token);
+    url = buildPastEventsURL({
+      groupName,
+      prependQueryParams: {
+        access_token: session.access_token, desc: true
+      }
+    });
   }
 
   return fetch(url)
@@ -62,7 +48,7 @@ const fetchPastEvents = ({
       const headers = response.headers;
 
       return response.json().then((json) => {
-        const data = getData(json);
+        const data = removeUpcomingEvents(json);
 
         const payload = data.payload;
 
@@ -70,7 +56,7 @@ const fetchPastEvents = ({
         for (ix = 0; ix < payload.length; ix += 1) {
           const ev = payload[ix];
 
-          if (eventsByIDOfGroup.byID[ev.id]) {
+          if (eventsByGroupID.byID[ev.id]) {
             return { pastEvents: groupEvents };
           }
 
@@ -88,23 +74,13 @@ const fetchPastEvents = ({
           link: nextLink,
           nextOrPrevPageLink: true,
           groupName,
-          eventsByIDOfGroup,
+          eventsByGroupID,
           groupEvents
         });
       });
     })
     .catch(err => console.error('fetch operation problem...', err));
 };
-
-const eventsByID = ({ pastEvents, groupID, groupName }) => ({
-  groupID,
-  groupName,
-  byID: pastEvents.reduce((acc, curr) => {
-    const newAcc = acc;
-    newAcc[curr.id] = curr;
-    return newAcc;
-  }, {})
-});
 
 export default allGroupDataFromJSON => (
   signedURLs
@@ -117,7 +93,7 @@ export default allGroupDataFromJSON => (
       if (!groupDataFromJSON) throw Error('we\'re boned');
 
       const groupName = groupDataFromJSON.main.body.urlname;
-      const eventsByIDOfGroup = eventsByID({
+      const eventsByGroupID = buildEventsByGroupIDHash({
         pastEvents: groupDataFromJSON.pastEvents,
         groupID: id,
         groupName
@@ -129,7 +105,7 @@ export default allGroupDataFromJSON => (
         link: signedURLFor.pastEventsDesc,
         nextOrPrevPageLink: false,
         groupName,
-        eventsByIDOfGroup,
+        eventsByGroupID,
         groupEvents
       });
     })
